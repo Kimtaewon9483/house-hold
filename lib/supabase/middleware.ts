@@ -1,15 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { hasEnvVars } from "../utils";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  // If the env vars are not set, skip middleware check. You can remove this
-  // once you setup the project.
-  if (!hasEnvVars) {
+  // Check if environment variables are available
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY) {
+    console.error('Missing Supabase environment variables');
     return supabaseResponse;
   }
 
@@ -44,16 +43,38 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: If you remove getClaims() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
-  const { data } = await supabase.auth.getClaims();
-  const user = data?.claims;
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getClaims();
+    user = data?.claims;
+  } catch (error) {
+    console.error('Error getting claims:', error);
+  }
 
-  if (
-    request.nextUrl.pathname !== "/" &&
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  // 유저인증 예외처리 - 로그인 없이 접근 가능한 경로들
+  const publicPaths = [
+    "/",
+    "/about",
+    "/contact",
+    "/help",
+    "/pricing",
+    "/graph",
+  ];
+  const authPaths = ["/auth"];
+
+  const isPublicPath = publicPaths.some(
+    (path) =>
+      request.nextUrl.pathname === path ||
+      (path !== "/" && request.nextUrl.pathname.startsWith(path)),
+  );
+
+  const isAuthPath = authPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path),
+  );
+
+  // 로그인하지 않은 사용자가 보호된 경로에 접근하려는 경우
+  if (!user && !isPublicPath && !isAuthPath) {
+    console.log("Redirecting to login");
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);

@@ -1,11 +1,18 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+<h1 align="center">House Hold Web</h1>
 
 <p align="center">
- The fastest way to build apps with Next.js and Supabase
+ Next.js와 Supabase를 활용한 가계부 웹 애플리케이션
 </p>
+
+## 📚 문서 모음
+
+프로젝트와 관련된 모든 문서는 [`documents/`](./documents/) 폴더에 체계적으로 정리되어 있습니다.
+
+- **구현 가이드**: [`documents/guides/`](./documents/guides/)
+- **컴포넌트 문서**: [`documents/components/`](./documents/components/) 
+- **버그 수정 문서**: [`documents/fixes/`](./documents/fixes/)
+
+> 📋 **문서 작성 규칙**: [`DOCUMENTATION_RULES.md`](./DOCUMENTATION_RULES.md)를 참고하여 일관된 문서 작성을 해주세요.
 
 <p align="center">
   <a href="#features"><strong>Features</strong></a> ·

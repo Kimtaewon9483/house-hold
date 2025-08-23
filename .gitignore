@@ -13,6 +13,11 @@
 # testing
 /coverage
 
+# documents
+/documents
+
+DOCUMENTATION_RULES.md
+
 # next.js
 /.next/
 /out/

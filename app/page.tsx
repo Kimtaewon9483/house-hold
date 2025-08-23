@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { DeployButton } from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import { AuthButton } from "@/components/auth-button";
@@ -9,6 +11,7 @@ import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 
 export default function Home() {
+  redirect("/graph");
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
