@@ -11,25 +11,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Menu, User, LogOut, Settings } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useAuthSelectors } from "@/lib/stores/authStore";
+import { LogoutButton } from "@/components/LogoutButton";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface UserMenuProps {
   user: SupabaseUser | null;
 }
 
-export function UserMenu({ user }: UserMenuProps) {
-  const router = useRouter();
+export function UserMenu({ user: serverUser }: UserMenuProps) {
   const pathname = usePathname();
+  const { isAuthenticated, user: dbUser, isInitialized } = useAuthSelectors();
+  
+  // 클라이언트 상태가 초기화되지 않았으면 서버 상태를 사용
+  const shouldShowUserMenu = isInitialized ? isAuthenticated : !!serverUser;
+  const displayName = dbUser?.display_name || serverUser?.email?.split('@')[0] || 'User';
 
-  const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.refresh();
-  };
-
-  if (user) {
+  if (shouldShowUserMenu) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -39,25 +37,31 @@ export function UserMenu({ user }: UserMenuProps) {
             className="p-2 hover:bg-gray-100"
             aria-label="사용자 메뉴"
           >
-            <Menu className="h-5 w-5" />
+            <div className="flex items-center space-x-2">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline text-sm font-medium">{displayName}</span>
+              <Menu className="h-4 w-4" />
+            </div>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>프로필</span>
+          <DropdownMenuItem asChild>
+            <Link href="/protected" className="flex items-center cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              <span>프로필</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
             <span>설정</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="text-red-600 cursor-pointer"
-            onClick={handleSignOut}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>로그아웃</span>
+          <DropdownMenuItem asChild className="p-0">
+            <LogoutButton 
+              variant="ghost" 
+              size="sm" 
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+            />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

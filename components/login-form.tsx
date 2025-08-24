@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +15,7 @@ import { GoogleLoginButton } from "@/components/google-login-button";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { authService } from "@/lib/services/authService";
 
 export function LoginForm({
   className,
@@ -33,29 +33,16 @@ export function LoginForm({
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      // const { error } = await supabase.auth.signInWithOAuth({
-      //   provider: "google",
-      //   options: {
-      //     queryParams: {
-      //       access_type: "offline",
-      //       prompt: "consent",
-      //     },
-      //   },
-      // });
-      if (error) throw error;
+      await authService.signInWithEmail(email, password);
       // 로그인 성공 후 원래 페이지 또는 기본 페이지로 리다이렉트
       console.log("authenticated");
       router.push(redirectTo);
     } catch (error: unknown) {
+      console.error('Login error:', error);
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsLoading(false);

@@ -8,9 +8,15 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
     
-    if (!error) {
+    try {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      
+      if (error) throw error;
+      
+      // 소셜 로그인 사용자의 경우 사용자 초기화 확인은 AuthProvider에서 처리됨
+      console.log('OAuth callback successful for:', data.user?.email);
+      
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
       
@@ -21,9 +27,12 @@ export async function GET(request: Request) {
       } else {
         return NextResponse.redirect(`${origin}${next}`);
       }
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      return NextResponse.redirect(`${origin}/auth/login?error=oauth_failed`);
     }
   }
 
-  // 에러가 발생한 경우 로그인 페이지로 리다이렉트
-  return NextResponse.redirect(`${origin}/auth/login?error=auth_failed`);
+  // code가 없는 경우
+  return NextResponse.redirect(`${origin}/auth/login?error=no_code`);
 }
