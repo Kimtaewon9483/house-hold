@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     const supabase = await createClient();
     
@@ -77,6 +77,7 @@ export async function POST(request: Request) {
 }
 
 // 동일한 초기화 함수 (기존 API와 공유)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function initializeUserData(supabase: any, userId: number, groupId: number) {
   try {
     // 1. 시스템 카테고리를 개인용으로 복사

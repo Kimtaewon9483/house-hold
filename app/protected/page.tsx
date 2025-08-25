@@ -2,10 +2,12 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuthSelectors } from '@/lib/stores/authStore';
-import { InfoIcon, User, Users, Wallet } from 'lucide-react';
+import { InfoIcon, User, Users, Wallet, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { SystemDataTest } from '@/components/test/SystemDataTest';
 import { DataDisplayTest } from '@/components/test/DataDisplayTest';
 
@@ -52,6 +54,39 @@ export default function ProtectedPage() {
           환영합니다! 가계부 관리를 시작해보세요.
         </div>
       </div>
+
+      {/* 빠른 액션 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Wallet size="20" />
+            빠른 액션
+          </CardTitle>
+          <CardDescription>
+            자주 사용하는 기능들에 빠르게 접근할 수 있습니다.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Link href="/transactions/add">
+              <Button className="w-full h-24 flex flex-col gap-2">
+                <Plus size="24" />
+                <span>새 거래 추가</span>
+              </Button>
+            </Link>
+            <Button variant="outline" className="w-full h-24 flex flex-col gap-2" disabled>
+              <Wallet size="24" />
+              <span>거래 목록</span>
+              <span className="text-xs text-muted-foreground">(준비중)</span>
+            </Button>
+            <Button variant="outline" className="w-full h-24 flex flex-col gap-2" disabled>
+              <InfoIcon size="24" />
+              <span>통계 보기</span>
+              <span className="text-xs text-muted-foreground">(준비중)</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* 사용자 정보 카드 */}
       <Card>

@@ -147,7 +147,7 @@ async function initializeUserData(supabase: any, userId: number, groupId: number
   }
 }
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     const supabase = await createClient();
     
