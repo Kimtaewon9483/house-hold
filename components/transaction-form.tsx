@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar } from "@/components/ui/calendar";
+import { CustomCalendar } from "@/components/custom/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Plus, Minus } from "lucide-react";
 import { format } from "date-fns";
@@ -386,11 +386,9 @@ export function TransactionForm({ onSubmit, onCancel, initialData }: Transaction
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
+                <CustomCalendar
                   selected={formData.transaction_date}
                   onSelect={(date) => updateFormData('transaction_date', date || new Date())}
-                  initialFocus
                 />
               </PopoverContent>
             </Popover>
